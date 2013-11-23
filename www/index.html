@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="viewport" content="user-scalable=yes, initial-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+<title>Test Images Caching</title>
+</head>
+
+<body>
+	<input type="text" id="imgurl" style="width: 100%;" value="http://customapps4you.appspot.com/blob?blob-key=AMIfv96GeYd4aswt1yycCq6atUPIS9TC9GPgV2rszxIz4o5592aQJl39xo3vaW2VHWzFP-bGK4W3zE7xaqK-lzyMrwEglrD511NEpP3xkEyUsHHUDstwV05uBNcGmJiYQqO1_FzpfObXum_mX6gEqZh56cVaIWRNAcjmWF6llzwJGINcWjq4JpY"/>
+	<input type="button" value="Cache Img" onclick="cacheImg()"/>
+	<input type="button" value="Force Init" onclick="forceInit()"/>
+	<input type="button" value="Clear Cache" onclick="clearCache()"/>
+	<div id="imgdiv">
+	</div>
+		<script>
+            document.addEventListener('deviceready', function() {
+				ImgCache.init(function(){
+					alert('cache created successfully!');
+				}, function(){
+					alert('check the log for errors');
+				});
+			}, false);
+			
+			function cacheImg(){
+				var src = $('#imgurl')[0].value;
+				
+				var cacheCallback = function(){
+					var target = $('<img src="" alt=""/>').appendTo('#imgdiv');
+					ImgCache.useCachedFileWithSource(target, src, function(){
+						alert('now using local copy');
+					}, function(){
+						alert('could not load from cache');
+					});
+				}
+				
+				ImgCache.isCached(src, function(path, success){
+					if(success){
+						cacheCallback();
+					} else {
+						ImgCache.cacheFile(src,cacheCallback);
+					}
+				});
+			}			
+			
+			function forceInit(){
+				
+				ImgCache.options.debug = true;
+			
+				ImgCache.init(function(){
+					alert('cache created successfully!');
+				}, function(){
+					alert('check the log for errors');
+				});
+			}
+			
+			function clearCache(){
+				ImgCache.clearCache(function(){
+					alert('cache cleared successfully!');
+				}, function(){
+					alert('problems with clearing clache!');
+				});
+			}
+			
+            </script>
+	<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="js/imgcache.js"></script>
+	<script type="text/javascript" src="phonegap.js"></script>	
+</body>
+</html>
